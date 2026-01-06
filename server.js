@@ -383,6 +383,47 @@ app.delete('/api/pdfs/:id', authMiddleware, (req, res) => {
     });
 });
 
+// Public widget endpoints (no auth required for Dakboard)
+app.get('/widget/messages', (req, res) => {
+    db.all('SELECT * FROM messages ORDER BY created_at DESC LIMIT 10', [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
+    });
+});
+
+app.get('/widget/updates', (req, res) => {
+    cleanupOldUpdates();
+    db.all('SELECT * FROM updates ORDER BY created_at DESC LIMIT 10', [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
+    });
+});
+
+app.get('/widget/all', (req, res) => {
+    const result = { messages: [], updates: [] };
+    db.all('SELECT * FROM messages ORDER BY created_at DESC LIMIT 10', [], (err, messages) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        result.messages = messages;
+        db.all('SELECT * FROM updates ORDER BY created_at DESC LIMIT 10', [], (err, updates) => {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            result.updates = updates;
+            res.json(result);
+        });
+    });
+});
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Team Portal server running on port ${PORT}`);
     console.log(`Access the portal at: http://localhost:${PORT}`);
