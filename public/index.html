@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Work+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4A9EFF;
+            --secondary: #2D3748;
+            --accent: #10B981;
+            --dark: #1A202C;
+            --darker: #111827;
+            --light: #2D3748;
+            --lighter: #374151;
+            --border: #374151;
+            --success: #10B981;
+            --text: #E5E7EB;
+            --text-muted: #9CA3AF;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--dark);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.6s ease;
+            border: 1px solid var(--border);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--lighter);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-dot.offline {
+            background: #dc3545;
+            animation: none;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3B8EEF;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--lighter);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            transform: translateY(-1px);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #0EA572;
+            transform: translateY(-1px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: transform 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .section-icon {
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+            background: var(--lighter);
+            color: var(--text);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--light);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .items-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .item {
+            background: var(--lighter);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .item-time {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .item-content {
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .photo-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .photo-item:hover {
+            transform: scale(1.03);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-delete {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-item:hover .photo-delete {
+            opacity: 1;
+        }
+
+        .pdf-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--lighter);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .pdf-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .pdf-icon {
+            font-size: 2rem;
+        }
+
+        .pdf-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-available { background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; }
+        .status-busy { background: rgba(251, 191, 36, 0.2); color: #FBBf24; border: 1px solid #FBBF24; }
+        .status-away { background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .widget-code {
+            background: var(--darker);
+            color: var(--text);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .copy-btn {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Team Portal</h1>
+            <div class="header-actions">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Connected</span>
+                </div>
+                <button class="btn btn-accent" onclick="openWidgetModal()">📊 Get Widget</button>
+                <button class="btn btn-secondary" onclick="logout()">🔒 Logout</button>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Messages Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">💬 Messages</h2>
+                    <span class="section-icon">📨</span>
+                </div>
+                <form onsubmit="addMessage(event)">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="messageName" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="messageText" placeholder="Type your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--secondary);">Recent Messages</h3>
+                    <div id="messagesList" class="items-list"></div>
+                </div>
+            </div>
+
+            <!-- Quick Updates Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">⚡ Quick Updates</h2>
+                    <span class="section-icon">🔔</span>
+                </div>
+                <form onsubmit="addUpdate(event)">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="updateName" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="updateStatus">
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                            <option value="away">Away</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Update</label>
+                        <input type="text" id="updateText" placeholder="What's happening?" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary" style="width: 100%;">Post Update</button>
+                </form>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--secondary);">Team Updates</h3>
+                    <div id="updatesList" class="items-list"></div>
+                </div>
+            </div>
+
+            <!-- Photo Sharing Section (hidden for now) -->
+            <div class="card" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">📸 Photos</h2>
+                    <span class="section-icon">🖼️</span>
+                </div>
+                <form onsubmit="addPhoto(event)">
+                    <div class="form-group">
+                        <label>Upload Photo</label>
+                        <input type="file" id="photoFile" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Caption (optional)</label>
+                        <input type="text" id="photoCaption" placeholder="Add a caption...">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Upload Photo</button>
+                </form>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--secondary);">Gallery</h3>
+                    <div id="photoGallery" class="photo-grid"></div>
+                </div>
+            </div>
+
+            <!-- PDF Sharing Section (hidden for now) -->
+            <div class="card" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">📄 Documents</h2>
+                    <span class="section-icon">📋</span>
+                </div>
+                <form onsubmit="addPDF(event)">
+                    <div class="form-group">
+                        <label>Upload PDF</label>
+                        <input type="file" id="pdfFile" accept=".pdf" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Document Name</label>
+                        <input type="text" id="pdfName" placeholder="Enter document name" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary" style="width: 100%;">Upload Document</button>
+                </form>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--secondary);">Shared Documents</h3>
+                    <div id="pdfList" class="items-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Widget Modal -->
+    <div id="widgetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Dakboard Widget</h2>
+                <button class="close-modal" onclick="closeWidgetModal()">×</button>
+            </div>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Copy and paste this URL into your Dakboard custom screen to display your team updates:</p>
+            
+            <div class="form-group">
+                <label>Widget Type</label>
+                <select id="widgetType" onchange="updateWidgetCode()">
+                    <option value="messages">Messages Widget</option>
+                    <option value="updates">Quick Updates Widget</option>
+                    <option value="all">All Content Widget</option>
+                </select>
+            </div>
+
+            <div class="widget-code" id="widgetCode"></div>
+            <button class="btn btn-primary copy-btn" onclick="copyWidgetCode()">📋 Copy URL</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        
+        let authToken = null;
+        let serverOnline = true;
+
+        function getAuthHeaders() {
+            return authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+        }
+
+        async function authFetch(url, options = {}) {
+            const headers = { ...getAuthHeaders(), ...(options.headers || {}) };
+            if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+                headers['Content-Type'] = 'application/json';
+                options.body = JSON.stringify(options.body);
+            }
+            const response = await fetch(url, { ...options, headers });
+            if (response.status === 401) {
+                sessionStorage.removeItem('teamPortalToken');
+                authToken = null;
+                showLoginScreen();
+                throw new Error('Session expired');
+            }
+            return response;
+        }
+
+        window.addEventListener('load', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const widgetMode = urlParams.get('widget');
+            
+            if (widgetMode) {
+                await initWidgetMode(widgetMode);
+                return;
+            }
+
+            const savedToken = sessionStorage.getItem('teamPortalToken');
+            if (savedToken) {
+                try {
+                    const response = await fetch(`${API_BASE}/api/verify`, {
+                        headers: { 'Authorization': `Bearer ${savedToken}` }
+                    });
+                    if (response.ok) {
+                        authToken = savedToken;
+                        await checkServerHealth();
+                        await loadAllData();
+                        return;
+                    }
+                } catch (e) {}
+            }
+            showLoginScreen();
+        });
+
+        function showLoginScreen() {
+            document.body.innerHTML = `
+                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--darker); padding: 2rem;">
+                    <div style="background: var(--dark); border-radius: 12px; padding: 3rem; max-width: 400px; width: 90%; box-shadow: 0 4px 6px var(--shadow); border: 1px solid var(--border); animation: slideDown 0.6s ease;">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <h1 style="font-family: 'Space Mono', monospace; font-size: 2.5rem; color: var(--text); margin-bottom: 0.5rem;">🔐</h1>
+                            <h2 style="font-family: 'Space Mono', monospace; font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem;">Team Portal</h2>
+                            <p style="color: var(--text-muted); font-size: 1rem;">Enter password to access</p>
+                        </div>
+                        <form onsubmit="checkPassword(event)" style="margin-bottom: 1rem;">
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text);">Password</label>
+                                <input type="password" id="passwordInput" placeholder="Enter password" required autocomplete="current-password"
+                                    style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Work Sans', sans-serif; font-size: 1rem; background: var(--lighter); color: var(--text);">
+                                <div id="errorMessage" style="color: #EF4444; font-size: 0.9rem; margin-top: 0.5rem; display: none;"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                                Unlock Portal
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function checkPassword(e) {
+            e.preventDefault();
+            const input = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMessage');
+            const btn = document.getElementById('loginBtn');
+            
+            btn.disabled = true;
+            btn.textContent = 'Verifying...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: input })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.token;
+                    sessionStorage.setItem('teamPortalToken', data.token);
+                    location.reload();
+                } else {
+                    const data = await response.json().catch(() => ({}));
+                    if (response.status === 429) {
+                        errorMsg.textContent = '🚫 ' + (data.error || 'Too many attempts. Please wait.');
+                    } else {
+                        errorMsg.textContent = '❌ Incorrect password. Please try again.';
+                    }
+                    errorMsg.style.display = 'block';
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('passwordInput').focus();
+                }
+            } catch (error) {
+                errorMsg.textContent = '❌ Connection error. Please try again.';
+                errorMsg.style.display = 'block';
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Unlock Portal';
+        }
+
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/api/logout`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+            } catch (e) {}
+            sessionStorage.removeItem('teamPortalToken');
+            authToken = null;
+            location.reload();
+        }
+
+        async function checkServerHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                if (response.ok) {
+                    updateStatus(true);
+                } else {
+                    updateStatus(false);
+                }
+            } catch (error) {
+                updateStatus(false);
+            }
+        }
+
+        function updateStatus(online) {
+            serverOnline = online;
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            if (!dot || !text) return;
+            
+            if (online) {
+                dot.classList.remove('offline');
+                text.textContent = 'Connected';
+            } else {
+                dot.classList.add('offline');
+                text.textContent = 'Offline';
+            }
+        }
+
+        async function loadAllData() {
+            try {
+                await Promise.all([
+                    loadMessages(),
+                    loadUpdates(),
+                    loadPhotos(),
+                    loadPDFs()
+                ]);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // ========== MESSAGES ==========
+
+        async function loadMessages() {
+            try {
+                const response = await authFetch(`${API_BASE}/api/messages`);
+                const messages = await response.json();
+                renderMessages(messages);
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                showError('messagesList', 'Failed to load messages');
+            }
+        }
+
+        async function addMessage(e) {
+            e.preventDefault();
+            const name = document.getElementById('messageName').value;
+            const text = document.getElementById('messageText').value;
+            
+            try {
+                const response = await authFetch(`${API_BASE}/api/messages`, {
+                    method: 'POST',
+                    body: { name, text, timestamp: new Date().toISOString() }
+                });
+                
+                if (response.ok) {
+                    document.getElementById('messageName').value = '';
+                    document.getElementById('messageText').value = '';
+                    await loadMessages();
+                }
+            } catch (error) {
+                console.error('Error adding message:', error);
+                alert('Failed to add message. Please try again.');
+            }
+        }
+
+        function renderMessages(messages) {
+            const list = document.getElementById('messagesList');
+            if (!messages || messages.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><p>No messages yet. Be the first to share!</p></div>';
+                return;
+            }
+            
+            list.innerHTML = messages.map(msg => `
+                <div class="item">
+                    <div class="item-header">
+                        <span class="item-title">${escapeHtml(msg.name)}</span>
+                        <span class="item-time">${formatTime(msg.timestamp)}</span>
+                    </div>
+                    <div class="item-content">${escapeHtml(msg.text)}</div>
+                    <div class="item-actions">
+                        <button class="btn btn-small btn-primary" onclick="deleteMessage(${msg.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteMessage(id) {
+            try {
+                await authFetch(`${API_BASE}/api/messages/${id}`, { method: 'DELETE' });
+                await loadMessages();
+            } catch (error) {
+                console.error('Error deleting message:', error);
+            }
+        }
+
+        // ========== UPDATES ==========
+
+        async function loadUpdates() {
+            try {
+                const response = await authFetch(`${API_BASE}/api/updates`);
+                const updates = await response.json();
+                renderUpdates(updates);
+            } catch (error) {
+                console.error('Error loading updates:', error);
+                showError('updatesList', 'Failed to load updates');
+            }
+        }
+
+        async function addUpdate(e) {
+            e.preventDefault();
+            const name = document.getElementById('updateName').value;
+            const status = document.getElementById('updateStatus').value;
+            const text = document.getElementById('updateText').value;
+            
+            try {
+                const response = await authFetch(`${API_BASE}/api/updates`, {
+                    method: 'POST',
+                    body: { name, status, text, timestamp: new Date().toISOString() }
+                });
+                
+                if (response.ok) {
+                    document.getElementById('updateName').value = '';
+                    document.getElementById('updateText').value = '';
+                    await loadUpdates();
+                }
+            } catch (error) {
+                console.error('Error adding update:', error);
+                alert('Failed to add update. Please try again.');
+            }
+        }
+
+        function renderUpdates(updates) {
+            const list = document.getElementById('updatesList');
+            if (!updates || updates.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚡</div><p>No updates yet. Share your status!</p></div>';
+                return;
+            }
+            
+            list.innerHTML = updates.map(upd => `
+                <div class="item">
+                    <div class="item-header">
+                        <span class="item-title">${escapeHtml(upd.name)}</span>
+                        <span class="item-time">${formatTime(upd.timestamp)}</span>
+                    </div>
+                    <span class="status-badge status-${upd.status}">${upd.status.toUpperCase()}</span>
+                    <div class="item-content">${escapeHtml(upd.text)}</div>
+                    <div class="item-actions">
+                        <button class="btn btn-small btn-secondary" onclick="deleteUpdate(${upd.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteUpdate(id) {
+            try {
+                await authFetch(`${API_BASE}/api/updates/${id}`, { method: 'DELETE' });
+                await loadUpdates();
+            } catch (error) {
+                console.error('Error deleting update:', error);
+            }
+        }
+
+        // ========== PHOTOS ==========
+
+        async function loadPhotos() {
+            try {
+                const response = await authFetch(`${API_BASE}/api/photos`);
+                const photos = await response.json();
+                renderPhotos(photos);
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                showError('photoGallery', 'Failed to load photos');
+            }
+        }
+
+        async function addPhoto(e) {
+            e.preventDefault();
+            const file = document.getElementById('photoFile').files[0];
+            const caption = document.getElementById('photoCaption').value;
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(evt) {
+                    try {
+                        const response = await authFetch(`${API_BASE}/api/photos`, {
+                            method: 'POST',
+                            body: { data: evt.target.result, caption, timestamp: new Date().toISOString() }
+                        });
+                        
+                        if (response.ok) {
+                            document.getElementById('photoFile').value = '';
+                            document.getElementById('photoCaption').value = '';
+                            await loadPhotos();
+                        }
+                    } catch (error) {
+                        console.error('Error adding photo:', error);
+                        alert('Failed to add photo. Please try again.');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderPhotos(photos) {
+            const gallery = document.getElementById('photoGallery');
+            if (!photos || photos.length === 0) {
+                gallery.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📸</div><p>No photos yet. Upload your first one!</p></div>';
+                return;
+            }
+            
+            gallery.innerHTML = photos.map(photo => `
+                <div class="photo-item" title="${escapeHtml(photo.caption || 'Photo')}">
+                    <img src="${photo.data}" alt="${escapeHtml(photo.caption || 'Photo')}">
+                    <button class="photo-delete" onclick="deletePhoto(${photo.id})">×</button>
+                </div>
+            `).join('');
+        }
+
+        async function deletePhoto(id) {
+            try {
+                await authFetch(`${API_BASE}/api/photos/${id}`, { method: 'DELETE' });
+                await loadPhotos();
+            } catch (error) {
+                console.error('Error deleting photo:', error);
+            }
+        }
+
+        // ========== PDFS ==========
+
+        async function loadPDFs() {
+            try {
+                const response = await authFetch(`${API_BASE}/api/pdfs`);
+                const pdfs = await response.json();
+                renderPDFs(pdfs);
+            } catch (error) {
+                console.error('Error loading PDFs:', error);
+                showError('pdfList', 'Failed to load documents');
+            }
+        }
+
+        async function addPDF(e) {
+            e.preventDefault();
+            const file = document.getElementById('pdfFile').files[0];
+            const name = document.getElementById('pdfName').value;
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(evt) {
+                    try {
+                        const response = await authFetch(`${API_BASE}/api/pdfs`, {
+                            method: 'POST',
+                            body: { name, data: evt.target.result, timestamp: new Date().toISOString() }
+                        });
+                        
+                        if (response.ok) {
+                            document.getElementById('pdfFile').value = '';
+                            document.getElementById('pdfName').value = '';
+                            await loadPDFs();
+                        }
+                    } catch (error) {
+                        console.error('Error adding PDF:', error);
+                        alert('Failed to add PDF. Please try again.');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderPDFs(pdfs) {
+            const list = document.getElementById('pdfList');
+            if (!pdfs || pdfs.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📄</div><p>No documents yet. Upload your first one!</p></div>';
+                return;
+            }
+            
+            list.innerHTML = pdfs.map(pdf => `
+                <div class="pdf-item">
+                    <div class="pdf-info">
+                        <span class="pdf-icon">📄</span>
+                        <div>
+                            <div class="pdf-name">${escapeHtml(pdf.name)}</div>
+                            <div class="item-time">${formatTime(pdf.timestamp)}</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <a href="${pdf.data}" download="${pdf.name}.pdf" class="btn btn-small btn-accent">Download</a>
+                        <button class="btn btn-small btn-secondary" onclick="deletePDF(${pdf.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deletePDF(id) {
+            try {
+                await authFetch(`${API_BASE}/api/pdfs/${id}`, { method: 'DELETE' });
+                await loadPDFs();
+            } catch (error) {
+                console.error('Error deleting PDF:', error);
+            }
+        }
+
+        // ========== WIDGET MODE ==========
+
+        async function initWidgetMode(type) {
+            document.body.style.padding = '1rem';
+            document.body.style.background = 'var(--darker)';
+            
+            const container = document.querySelector('.container');
+            container.innerHTML = '<div id="widgetContent" class="loading">Loading...</div>';
+            
+            await loadWidgetData(type);
+            setInterval(() => loadWidgetData(type), 30000);
+        }
+
+        async function loadWidgetData(type) {
+            const content = document.getElementById('widgetContent');
+            let html = '';
+            
+            try {
+                if (type === 'messages' || type === 'all') {
+                    const response = await fetch(`${API_BASE}/api/messages`);
+                    const messages = await response.json();
+                    
+                    html += '<div style="margin-bottom: 2rem;"><h2 style="font-family: Space Mono, monospace; color: var(--text); margin-bottom: 1rem;">💬 Messages</h2>';
+                    if (messages && messages.length > 0) {
+                        html += messages.slice(0, 5).map(msg => `
+                            <div style="background: var(--lighter); padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 3px solid var(--primary);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <strong style="color: var(--text);">${escapeHtml(msg.name)}</strong>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">${formatTime(msg.timestamp)}</span>
+                                </div>
+                                <div style="color: var(--text);">${escapeHtml(msg.text)}</div>
+                            </div>
+                        `).join('');
+                    }
+                    html += '</div>';
+                }
+                
+                if (type === 'updates' || type === 'all') {
+                    const response = await fetch(`${API_BASE}/api/updates`);
+                    const updates = await response.json();
+                    
+                    html += '<div><h2 style="font-family: Space Mono, monospace; color: var(--text); margin-bottom: 1rem;">⚡ Quick Updates</h2>';
+                    if (updates && updates.length > 0) {
+                        html += updates.slice(0, 5).map(upd => `
+                            <div style="background: var(--lighter); padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 3px solid var(--accent);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <strong style="color: var(--text);">${escapeHtml(upd.name)}</strong>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">${formatTime(upd.timestamp)}</span>
+                                </div>
+                                <span class="status-badge status-${upd.status}">${upd.status.toUpperCase()}</span>
+                                <div style="margin-top: 0.5rem; color: var(--text);">${escapeHtml(upd.text)}</div>
+                            </div>
+                        `).join('');
+                    }
+                    html += '</div>';
+                }
+                
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Failed to load data</p></div>';
+            }
+        }
+
+        // ========== UTILITIES ==========
+
+        function openWidgetModal() {
+            document.getElementById('widgetModal').classList.add('active');
+            updateWidgetCode();
+        }
+
+        function closeWidgetModal() {
+            document.getElementById('widgetModal').classList.remove('active');
+        }
+
+        function updateWidgetCode() {
+            const type = document.getElementById('widgetType').value;
+            const widgetUrl = `${window.location.origin}/?widget=${type}`;
+            document.getElementById('widgetCode').textContent = widgetUrl;
+        }
+
+        function copyWidgetCode() {
+            const code = document.getElementById('widgetCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Widget URL copied to clipboard!');
+            });
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>${message}</p></div>`;
+        }
+
+        // Check server health periodically
+        setInterval(checkServerHealth, 30000);
+    </script>
+</body>
+</html>
