@@ -74,12 +74,13 @@ app.set('trust proxy', 1);
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.static('public'));
 
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
 });
+
+app.use(express.static('public'));
 
 const db = new sqlite3.Database('./team-portal.db', (err) => {
     if (err) {
@@ -421,6 +422,192 @@ app.get('/widget/all', (req, res) => {
             result.updates = updates;
             res.json(result);
         });
+    });
+});
+
+// HTML Widget for Quick Updates (formatted display)
+app.get('/widget/updates/html', (req, res) => {
+    cleanupOldUpdates();
+    db.all('SELECT * FROM updates ORDER BY created_at DESC LIMIT 10', [], (err, rows) => {
+        if (err) {
+            res.status(500).send('Error loading updates');
+            return;
+        }
+        
+        // Sort by priority: critical > urgent > notice
+        const priorityOrder = { critical: 0, urgent: 1, notice: 2 };
+        const sortedUpdates = rows.sort((a, b) => {
+            const priorityA = priorityOrder[a.status] ?? 3;
+            const priorityB = priorityOrder[b.status] ?? 3;
+            if (priorityA !== priorityB) return priorityA - priorityB;
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+        
+        const formatTime = (timestamp) => {
+            const date = new Date(timestamp);
+            return date.toLocaleString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        };
+        
+        const getUrgencyStyles = (status) => {
+            switch(status) {
+                case 'critical':
+                    return {
+                        bg: '#FF1744',
+                        border: '#FF5252',
+                        text: '#FFFFFF',
+                        badge: '#FFFFFF',
+                        badgeBg: '#B71C1C',
+                        glow: '0 0 20px rgba(255, 23, 68, 0.6), 0 0 40px rgba(255, 23, 68, 0.3)'
+                    };
+                case 'urgent':
+                    return {
+                        bg: '#FF9100',
+                        border: '#FFB74D',
+                        text: '#000000',
+                        badge: '#000000',
+                        badgeBg: '#FF6D00',
+                        glow: 'none'
+                    };
+                case 'notice':
+                default:
+                    return {
+                        bg: '#2E7D32',
+                        border: '#4CAF50',
+                        text: '#FFFFFF',
+                        badge: '#FFFFFF',
+                        badgeBg: '#1B5E20',
+                        glow: 'none'
+                    };
+            }
+        };
+        
+        let updatesHtml = '';
+        sortedUpdates.forEach(update => {
+            const styles = getUrgencyStyles(update.status);
+            const isCritical = update.status === 'critical';
+            updatesHtml += `
+                <div class="update-card ${isCritical ? 'critical-pulse' : ''}" style="
+                    background: ${styles.bg};
+                    border: 2px solid ${styles.border};
+                    border-radius: 12px;
+                    padding: 1.25rem;
+                    margin-bottom: 1rem;
+                    box-shadow: ${styles.glow};
+                    ${isCritical ? 'animation: pulse 1.5s infinite;' : ''}
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span style="
+                            font-weight: 700;
+                            font-size: 1.1rem;
+                            color: ${styles.text};
+                        ">${update.name}</span>
+                        <span style="
+                            background: ${styles.badgeBg};
+                            color: ${styles.badge};
+                            padding: 0.3rem 0.75rem;
+                            border-radius: 20px;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                        ">${update.status}</span>
+                    </div>
+                    <div style="
+                        color: ${styles.text};
+                        font-size: 1.15rem;
+                        line-height: 1.5;
+                        margin-bottom: 0.5rem;
+                    ">${update.text}</div>
+                    <div style="
+                        color: ${styles.text};
+                        opacity: 0.8;
+                        font-size: 0.85rem;
+                    ">${formatTime(update.timestamp || update.created_at)}</div>
+                </div>
+            `;
+        });
+        
+        if (sortedUpdates.length === 0) {
+            updatesHtml = `
+                <div style="
+                    text-align: center;
+                    padding: 3rem;
+                    color: #9CA3AF;
+                    font-size: 1.2rem;
+                ">No updates to display</div>
+            `;
+        }
+        
+        const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="30">
+    <title>Quick Updates Widget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111827;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #F3F4F6;
+        }
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .header p {
+            color: #9CA3AF;
+            font-size: 0.9rem;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.01);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Team Updates</h1>
+            <p>Auto-refreshes every 30 seconds</p>
+        </div>
+        ${updatesHtml}
+    </div>
+</body>
+</html>
+        `;
+        
+        res.send(html);
     });
 });
 
