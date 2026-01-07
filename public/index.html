@@ -365,9 +365,9 @@
             margin-bottom: 0.5rem;
         }
 
-        .status-available { background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; }
-        .status-busy { background: rgba(251, 191, 36, 0.2); color: #FBBf24; border: 1px solid #FBBF24; }
-        .status-away { background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; }
+        .status-notice { background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; }
+        .status-urgent { background: rgba(251, 191, 36, 0.2); color: #FBBf24; border: 1px solid #FBBF24; }
+        .status-critical { background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; }
 
         .modal {
             display: none;
@@ -525,11 +525,11 @@
                         <input type="text" id="updateName" placeholder="Enter your name" required>
                     </div>
                     <div class="form-group">
-                        <label>Status</label>
+                        <label>Urgency</label>
                         <select id="updateStatus">
-                            <option value="available">Available</option>
-                            <option value="busy">Busy</option>
-                            <option value="away">Away</option>
+                            <option value="notice">Notice</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="critical">Critical</option>
                         </select>
                     </div>
                     <div class="form-group">
